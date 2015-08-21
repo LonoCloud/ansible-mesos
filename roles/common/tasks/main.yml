@@ -1,0 +1,35 @@
+---
+- name: Install ZooKeeper node list script
+  template:
+    src: zk-list-nodes.j2
+    dest: /usr/local/bin/zk-list-nodes
+    owner: "{{ remote_user }}"
+    group: "{{ remote_user }}"
+    mode: 0555
+
+- name: Install IP resolution script
+  template:
+    src: resolve-host.j2
+    dest: /usr/local/bin/resolve-host
+    owner: "{{ remote_user }}"
+    group: "{{ remote_user }}"
+    mode: 0555
+
+- name: Install Host Patch script
+  template:
+    src: patch-hosts-file.j2
+    dest: /usr/local/bin/patch-hosts-file
+    owner: "{{ remote_user }}"
+    group: "{{ remote_user }}"
+    mode: 0555
+
+- name: Resolve IP address to be bound as the hostname
+  shell: "resolve-host {{ network_interface }}"
+  register: mesos_hostname_output
+
+- name: Bind IP address for Mesos hostname
+  set_fact:
+    mesos_hostname: "{{ mesos_hostname_output.get('stdout') }}"
+
+- name: Map internal IP to hostname
+  shell: "patch-hosts-file {{ network_interface }}"

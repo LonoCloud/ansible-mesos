@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+network_interface=$1
+/sbin/ifconfig $network_interface | grep 'inet addr' | awk -F: '{print $2}' | awk '{print $1}'

@@ -1,0 +1,13 @@
+---
+dockerhub_email:
+dockerhub_password:
+
+aws_access_key:
+aws_secret_key:
+
+key_file: ~/.ssh/where-you-want-your-key.pem
+
+ssh_key: |
+  -----BEGIN RSA PRIVATE KEY-----
+  # Put your private key contents here to log onto EC2 machines.
+  -----END RSA PRIVATE KEY-----

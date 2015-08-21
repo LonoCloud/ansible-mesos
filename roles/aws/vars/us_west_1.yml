@@ -1,0 +1,6 @@
+---
+aws_region: us-west-1
+aws_subnet_az: us-west-1b
+ec2_instance_type: m3.large
+ec2_image_id: ami-d16a8b95
+remote_user: ubuntu

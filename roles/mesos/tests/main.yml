@@ -1,0 +1,13 @@
+---
+
+- hosts: localhost
+  connection: local
+  sudo: yes
+  
+  roles:
+    - ansible-mesos
+
+  # tasks:
+    # Ansible does not recommend checking for service status as a test
+    # Need to find a rest endpoint to curl instead
+    

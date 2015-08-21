@@ -1,0 +1,30 @@
+---
+- name: Add private ZooKeeper hosts to inventory
+  add_host:
+    name: "{{ item }}"
+    groups: "private-zk-nodes"
+  with_items: "{{ aws_region | private_zk_nodes(mesos_cluster_id, aws_access_key, aws_secret_key) }}"
+
+- name: Add public ZooKeeper hosts to inventory
+  add_host:
+    name: "{{ item }}"
+    groups: "public-zk-nodes"
+  with_items: "{{ aws_region | public_zk_nodes(mesos_cluster_id, aws_access_key, aws_secret_key) }}"
+
+- name: Add new Mesos Master hosts to inventory
+  add_host:
+    name: "{{ item }}"
+    groups: "mesos-masters"
+  with_items: "{{ aws_region | mesos_master_nodes(mesos_cluster_id, aws_access_key, aws_secret_key) }}"
+
+- name: Add Mesos Slave hosts to inventory
+  add_host:
+    name: "{{ item }}"
+    groups: "mesos-slaves"
+  with_items: "{{ aws_region | mesos_slave_nodes(mesos_cluster_id, aws_access_key, aws_secret_key) }}"
+
+- name: Add Mesos Marathon hosts to inventory
+  add_host:
+    name: "{{ item }}"
+    groups: "marathon-nodes"
+  with_items: "{{ aws_region | mesos_marathon_nodes(mesos_cluster_id, aws_access_key, aws_secret_key) }}"

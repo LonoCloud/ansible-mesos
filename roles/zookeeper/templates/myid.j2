@@ -1,0 +1,5 @@
+{% for server in groups['public-zk-nodes'] %}
+{% if server == inventory_hostname %}
+{{ loop.index }}
+{% endif %}
+{% endfor %}

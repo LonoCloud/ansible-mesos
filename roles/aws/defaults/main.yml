@@ -1,0 +1,5 @@
+---
+mesos_zookeeper: False
+mesos_master: False
+mesos_slave: False
+mesos_marathon: False

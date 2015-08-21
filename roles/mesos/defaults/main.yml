@@ -1,0 +1,19 @@
+---
+mesos_install_mode: "master" # {master|slave|master-slave}
+
+zookeeper_hostnames: "{{ aws_region | private_zk_nodes(mesos_cluster_id, aws_access_key, aws_secret_key) | join(':2181,') ~ ':2181' }}"
+
+mesos_cluster_name: "mesos_cluster"
+mesos_log_location: "/var/log/mesos"
+mesos_ulimit: "-n 8192"
+mesos_options: "--log_dir=$LOGS"
+mesos_work_dir: "/var/mesos"
+mesos_zookeeper_masters: "zk://{{ zookeeper_hostnames }}/mesos" 
+
+mesos_ip: 0.0.0.0
+mesos_dist: ubuntu1404
+mesos_version: 0.22.1
+mesos_quorum: "{{ ((groups['mesos-masters'] | length) / 2) | round | int }}"
+mesos_containerizers: "docker,mesos"
+mesos_executor_timeout: "5mins"
+mesos_port: "5050"

@@ -1,0 +1,20 @@
+---
+- include_vars: ../vars/us_east_1.yml
+  when: aws_region == 'us-east-1'
+
+- include_vars: ../vars/us_west_1.yml
+  when: aws_region == 'us-west-1'
+
+- include_vars: ../vars/us_west_2.yml
+  when: aws_region == 'us-west-2'
+
+- include: ssh_keys.yml
+
+- include: create_vpc.yml
+  when: aws_provision or aws_destroy
+
+- include: create_ec2_vm.yml
+  when: aws_provision
+
+- include: destroy_ec2_vm.yml
+  when: aws_destroy

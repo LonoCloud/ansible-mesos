@@ -1,0 +1,18 @@
+---
+network_interface: eth0
+
+java_packages:
+  - oracle-java8-installer
+
+n_vms: 3
+vm_name_prefix: "mesos-vm-"
+
+aws_provision: yes
+aws_destroy: no
+
+mesos_zookeeper: yes
+mesos_master: yes
+mesos_slave: yes
+mesos_marathon: yes
+
+ansible_min_version: 2.0.0

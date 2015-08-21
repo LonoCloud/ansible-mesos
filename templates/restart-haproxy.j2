@@ -1,0 +1,1 @@
+* * * * * root docker run --rm --net=host --name haproxy -v /etc/haproxy/haproxy.cfg:/etc/haproxy/haproxy.cfg -v /var/run/docker.sock:/var/run/docker.sock -v /var/lib/docker:/var/lib/docker -v /usr/bin/docker:/usr/bin/docker --entrypoint=/usr/bin/haproxy_marathon_bridge.sh lonocloud/marathon refresh_haproxy {{ zookeeper_hostnames }}

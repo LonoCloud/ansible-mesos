@@ -1,0 +1,74 @@
+---
+- name: Install Docker credentials
+  template:
+    src: docker.cfg.j2
+    dest: "/home/{{remote_user}}/.dockercfg"
+    owner: "{{ remote_user }}"
+    group: "{{ remote_user }}"
+    mode: 0555
+
+- name: Check if Docker is installed
+  command: dpkg-query -l docker-engine
+  register: is_installed
+  failed_when: is_installed.rc > 1
+  changed_when: no
+
+- name: Add Docker repository
+  shell: echo deb http://get.docker.com/ubuntu docker main > /etc/apt/sources.list.d/docker.list
+  when: is_installed.rc == 1
+
+- name: Add Docker key
+  shell: apt-key adv --keyserver pgp.mit.edu --recv-keys 36A1D7869245C8950F966E92D8576A8BA88D21E9
+  when: is_installed.rc == 1
+
+- name: Update apt
+  shell: apt-get update
+  when: is_installed.rc == 1
+
+- name: Install Docker
+  shell: apt-get install -y lxc-docker-1.7.1
+  when: is_installed.rc == 1
+
+- name: Install Pip
+  apt:
+    name: python-pip
+    state: present
+
+- name: Install docker-py
+  shell: pip install docker-py==1.1.0
+
+- name: Launch Marathon Docker container
+  docker:
+    name: marathon
+    image: lonocloud/marathon:0.8.2
+    command: "--zk {{ zookeeper_marathon_uri }} --master {{ zookeeper_mesos_uri }} --hostname {{ mesos_hostname }} --ha"
+    net: host
+    detach: yes
+    state: reloaded
+    pull: always
+    restart_policy: always
+    restart_policy_retry: 128
+
+- name: Wait for Marathon to come up
+  wait_for: port=8080 delay=20 timeout=60
+
+- name: Create HAProxy configuration directory
+  shell: mkdir -p /etc/haproxy
+
+- name: Initialize HAProxy configuration file
+  shell: touch /etc/haproxy/haproxy.cfg
+
+- name: Add HAProxy Cron job
+  cron:
+    name: HAProxy refresh
+    user: root
+    cron_file: restart-haproxy
+    job: >
+      docker run --rm --net=host --name haproxy
+      -v /etc/haproxy/haproxy.cfg:/etc/haproxy/haproxy.cfg
+      -v /var/run/docker.sock:/var/run/docker.sock
+      -v /var/lib/docker:/var/lib/docker
+      -v /usr/bin/docker:/usr/bin/docker
+      -v /usr/lib/x86_64-linux-gnu/libapparmor.so.1:/usr/lib/x86_64-linux-gnu/libapparmor.so.1
+      --entrypoint=/usr/bin/haproxy_marathon_bridge.sh
+      lonocloud/marathon refresh_haproxy {{ zookeeper_hostnames }}

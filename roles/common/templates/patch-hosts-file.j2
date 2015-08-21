@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+network_interface=$1
+addr=`resolve-host $network_interface`
+
+resolver="$addr `hostname -s` `hostname -f &> /dev/null`"
+
+# If the hostname isn't in /etc/hosts, append it.
+if ! grep --quiet `hostname -s` /etc/hosts
+then
+  echo $resolver >> /etc/hosts
+else
+  # If we found the hostname in the file, use sed to make
+  # sure it points to the IP on the correct network interface.
+  sed -i "s/.*`hostname -s`.*/$resolver/" /etc/hosts
+
+  # Also do this for the FQDN.
+  if hostname -f &> /dev/null
+  then
+    sed -i "s/.*`hostname -f`.*/$resolver/" /etc/hosts
+  fi
+fi

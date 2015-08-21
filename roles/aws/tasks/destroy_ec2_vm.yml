@@ -1,0 +1,17 @@
+---
+- name: Destroy EC2 machines
+  register: ec2
+  ec2:
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    assign_public_ip: yes
+    exact_count: 0
+    count_tag: "{{ mesos_cluster_id }}"
+    zone: "{{ aws_subnet_az }}"
+    region: "{{ aws_region }}"
+    key_name: "{{ aws_key_name }}"
+    image: "{{ ec2_image_id }}"
+    instance_type: "{{ ec2_instance_type }}"
+    vpc_subnet_id: "{{ vpc_subnet_id }}"
+    wait: yes
+    wait_timeout: 300

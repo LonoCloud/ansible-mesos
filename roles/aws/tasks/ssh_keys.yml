@@ -1,0 +1,11 @@
+---
+- name: Ensure .ssh directory exists
+  file:
+    dest: "{{ key_file | dirname }}"
+    state: directory
+
+- name: Install ssh key
+  copy:
+    content: "{{ ssh_key }}"
+    dest: "{{ key_file }}"
+    mode: 0400

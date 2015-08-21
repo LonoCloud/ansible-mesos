@@ -1,0 +1,48 @@
+---
+- hosts: localhost
+  pre_tasks:
+    - include_vars: ../defaults/main.yml
+    - include_vars: ../vars/main.yml
+    - include: check_ansible_version.yml
+    # Add any existing machines to the inventory.
+    - include: populate_inventory.yml
+  roles:
+    - aws
+  tasks:
+    # Add to the inventory again for any new machines
+    # that we brought up.
+    - include: populate_inventory.yml
+
+- hosts: public-zk-nodes
+  remote_user: "{{ remote_user }}"
+  sudo: yes
+  pre_tasks:
+    - include_vars: ../defaults/main.yml
+    - include_vars: ../vars/main.yml
+  roles:
+    - { role: zookeeper }
+
+- hosts: mesos-masters
+  remote_user: "{{ remote_user }}"
+  sudo: yes
+  pre_tasks:
+    - include_vars: ../defaults/main.yml
+  roles:
+    - { role: mesos, mesos_install_mode: master, mesos_port: 5050 }
+
+- hosts: mesos-slaves
+  remote_user: "{{ remote_user }}"
+  sudo: yes
+  pre_tasks:
+    - include_vars: ../defaults/main.yml
+  roles:
+    - { role: mesos, mesos_install_mode: slave, mesos_port: 5051 }
+
+- hosts: marathon-nodes
+  remote_user: "{{ remote_user }}"
+  sudo: yes
+  pre_tasks:
+    - include_vars: ../defaults/main.yml
+    - include_vars: ../vars/main.yml
+  roles:
+    - { role: marathon }
