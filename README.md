@@ -1,11 +1,11 @@
 Mesos
 =========
 
-This playbook deploys Mesos with Marathon in high availability mode across an AWS cluster of EC2 nodes using Ansible 2.
+This playbook deploys Mesos with Marathon and HAProxy in high availability mode across an AWS cluster of EC2 nodes using Ansible 2.
 
 ### Set up
 
-This section will get Ansible and this repository set up on your machine.
+This section will get Ansible installed on your machine.
 
 #### Install Ansible
 
@@ -57,30 +57,30 @@ This will render a description of how to use the script. You can provision a new
 
 This script supports colocation of services on the same machine. By provisionining with `--zookeeper` and `--mesos-master`, with `--n-instances` set to 3, you will get three machines in your cluster that each runs ZooKeeper and a Mesos master.
 
-Running this script will prompt you for a password. Obtain the password from LastPass.
+Running this script should prompt for you a password after you've encrypted your credentials in `vars/main.yml`. You can also supply a file that contains your credentials with the `-f` flag.
 
 #### Script Example
 
 ```text
 # Provision 3 EC2 machines and run ZooKeeper on them.
-$ python scripts/aws_deploy.py --ansible-vault-password-file ~/.ansible-vault.txt --n-instances 3 --zookeeper us-west-2 mdrogalis provision
+$ python scripts/aws_deploy.py --n-instances 3 --zookeeper us-west-2 mdrogalis provision
 
 # Provision 3 EC2 machines each running both a Mesos Master and Marathon master
-$ python scripts/aws_deploy.py --ansible-vault-password-file ~/.ansible-vault.txt --n-instances 3 --mesos-master --marathon us-west-2 mdrogalis provision
+$ python scripts/aws_deploy.py --n-instances 3 --mesos-master --marathon us-west-2 mdrogalis provision
 
 # Provision 2 EC2 machines running only Mesos slaves
-$ python scripts/aws_deploy.py --ansible-vault-password-file ~/.ansible-vault.txt --n-instancews 2 --mesos-slave us-west-2 mdrogalis provision
+$ python scripts/aws_deploy.py --n-instancews 2 --mesos-slave us-west-2 mdrogalis provision
 
 # Scale down Mesos slaves from 2 to 1 instances
-$ python scripts/aws_deploy.py --ansible-vault-password-file ~/.ansible-vault.txt --n-instances 1 --mesos-slave us-west-2 mdrogalis provision
+$ python scripts/aws_deploy.py --n-instances 1 --mesos-slave us-west-2 mdrogalis provision
 
 # Make a change to the playbook, update all the machines
-$ python scripts/aws_deploy.py --ansible-vault-password-file ~/.ansible-vault.txt us-west-2 mdrogalis freshen
+$ python scripts/aws_deploy.py us-west-2 mdrogalis freshen
 ```
 
 ### Service Discovery
 
-We use HAProxy with Marathon to do service discovery. All services that run on Marathon must take their dependent hosts and ports in as parameters, often looking up "localhost" to a predefined, agreed-upon port to discover the dependent service.
+We use HAProxy with Marathon to do service discovery. All services that run on Marathon must take their dependent hosts and ports in as parameters, looking up "localhost" to a predefined, agreed-upon port to discover the dependent service.
 
 ### License
 
