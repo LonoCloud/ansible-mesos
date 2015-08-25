@@ -69,7 +69,7 @@ $ python scripts/aws_deploy.py --n-instances 3 --zookeeper us-west-2 mdrogalis p
 $ python scripts/aws_deploy.py --n-instances 3 --mesos-master --marathon us-west-2 mdrogalis provision
 
 # Provision 2 EC2 machines running only Mesos slaves
-$ python scripts/aws_deploy.py --n-instancews 2 --mesos-slave us-west-2 mdrogalis provision
+$ python scripts/aws_deploy.py --n-instances 2 --mesos-slave us-west-2 mdrogalis provision
 
 # Scale down Mesos slaves from 2 to 1 instances
 $ python scripts/aws_deploy.py --n-instances 1 --mesos-slave us-west-2 mdrogalis provision
